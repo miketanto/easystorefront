@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  FULFILLED
+  CANCELED
+}
+
+model MenuItem {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  price       Int          // Stored in IDR (no fractional currency)
+  imageUrl    String?
+  category    String?
+  isAvailable Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  orderItems  OrderItem[]
+}
+
+model Order {
+  id            String       @id @default(cuid())
+  customerName  String
+  customerPhone String
+  note          String?
+  status        OrderStatus  @default(PENDING)
+  total         Int
+  items         OrderItem[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id            String   @id @default(cuid())
+  orderId       String
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId    String?
+  menuItem      MenuItem? @relation(fields: [menuItemId], references: [id])
+  nameSnapshot  String
+  priceSnapshot Int    // price at time of order
+  quantity      Int
+  lineTotal     Int    // denormalized quantity * priceSnapshot
+}
