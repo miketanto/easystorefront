@@ -50,30 +50,35 @@ export default function CheckoutPage() {
   return (
     <SessionGuard>
       <main className="space-y-6">
-        <h1 className="text-2xl font-semibold">Checkout</h1>
-        {!items.length && <p className="text-sm text-gray-500">Keranjang kosong.</p>}
+        <div className="flex items-center gap-4">
+          <button type="button" onClick={() => router.push('/')} className="text-sm px-3 py-2 rounded border bg-white hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:border-gray-700 dark:text-gray-200" aria-label="Kembali ke menu">
+            ← Kembali
+          </button>
+          <h1 className="text-2xl font-semibold dark:text-gray-100">Checkout</h1>
+        </div>
+        {!items.length && <p className="text-sm text-gray-500 dark:text-gray-400">Keranjang kosong.</p>}
         {items.length > 0 && (
           <form onSubmit={submit} className="space-y-4 max-w-md">
             <div className="space-y-2">
-              <label className="block text-sm font-medium">Nama</label>
-              <input value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} className="w-full border rounded px-3 py-2 text-sm" required />
+              <label className="block text-sm font-medium dark:text-gray-200">Nama</label>
+              <input value={form.name} onChange={e=>setForm(f=>({...f,name:e.target.value}))} className="w-full border rounded px-3 py-2 text-sm bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100" required />
             </div>
             <div className="space-y-2">
-              <label className="block text-sm font-medium">Nomor Telepon</label>
-              <input value={form.phone} onChange={e=>setForm(f=>({...f,phone:e.target.value}))} className="w-full border rounded px-3 py-2 text-sm" required />
+              <label className="block text-sm font-medium dark:text-gray-200">Nomor Telepon</label>
+              <input value={form.phone} onChange={e=>setForm(f=>({...f,phone:e.target.value}))} className="w-full border rounded px-3 py-2 text-sm bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100" required />
             </div>
             <div className="space-y-2">
-              <label className="block text-sm font-medium">Catatan (opsional)</label>
-              <textarea value={form.note} onChange={e=>setForm(f=>({...f,note:e.target.value}))} className="w-full border rounded px-3 py-2 text-sm" rows={3} />
+              <label className="block text-sm font-medium dark:text-gray-200">Catatan (opsional)</label>
+              <textarea value={form.note} onChange={e=>setForm(f=>({...f,note:e.target.value}))} className="w-full border rounded px-3 py-2 text-sm bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100" rows={3} />
             </div>
             <div className="space-y-2">
-              <h2 className="font-medium">Ringkasan</h2>
-              <ul className="text-sm space-y-1">
+              <h2 className="font-medium dark:text-gray-100">Ringkasan</h2>
+              <ul className="text-sm space-y-1 dark:text-gray-300">
                 {items.map(it => <li key={it.id}>{it.quantity}x {it.name} - {formatIDR(it.price * it.quantity)}</li>)}
               </ul>
-              <div className="font-semibold pt-2">Total: {formatIDR(total)}</div>
+              <div className="font-semibold pt-2 dark:text-gray-100">Total: {formatIDR(total)}</div>
             </div>
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
             <button disabled={disabled} className="bg-green-600 disabled:opacity-60 disabled:cursor-not-allowed hover:bg-green-700 text-white rounded px-4 py-2 text-sm font-medium w-full">{loading ? 'Mengirim...' : 'Kirim Pesanan'}</button>
           </form>
         )}

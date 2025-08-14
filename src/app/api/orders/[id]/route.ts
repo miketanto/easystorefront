@@ -12,6 +12,7 @@ export async function GET(_req: Request, context: { params: Promise<{ id: string
       note: true,
       total: true,
       createdAt: true,
+      trackingLink: true,
       items: { select: { id: true, nameSnapshot: true, quantity: true, lineTotal: true } }
     }
   });

@@ -24,3 +24,8 @@ export const startCartSessionSchema = z.object({
   phone: z.string().min(5).max(30)
 });
 export type StartCartSessionInput = z.infer<typeof startCartSessionSchema>;
+
+export const updateTrackingLinkSchema = z.object({
+  trackingLink: z.string().trim().min(1).max(1000).optional().or(z.literal('')).nullable()
+});
+export type UpdateTrackingLinkInput = z.infer<typeof updateTrackingLinkSchema>;

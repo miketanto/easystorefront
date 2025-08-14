@@ -51,6 +51,7 @@ model Order {
   items         OrderItem[]
   cartSessionId String?
   cartSession   CartSession? @relation(fields: [cartSessionId], references: [id])
+  trackingLink  String?      // optional delivery tracking URL
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 
