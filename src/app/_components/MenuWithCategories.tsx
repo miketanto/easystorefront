@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useCart } from '@/components/cart/CartContext';
 import { formatIDR } from '@/lib/currency';
 import { CartSummary } from '@/components/cart/CartSummary';
@@ -12,8 +12,16 @@ export default function MenuWithCategories({ items }: { items: Item[] }) {
     return Array.from(set).sort();
   }, [items]);
   const [active, setActive] = useState<string>(categories[0] || '');
-  const { add } = useCart();
+  const { add, items: cartItems } = useCart();
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const filtered = items.filter(i => (i.category || 'Lainnya') === active);
+
+  // Close drawer on ESC
+  const handleKey = useCallback((e: KeyboardEvent) => { if (e.key === 'Escape') setDrawerOpen(false); }, []);
+  useEffect(() => { if (drawerOpen) { window.addEventListener('keydown', handleKey); } else { window.removeEventListener('keydown', handleKey); } return () => window.removeEventListener('keydown', handleKey); }, [drawerOpen, handleKey]);
+
+  // Prevent body scroll when drawer open on mobile
+  useEffect(() => { if (drawerOpen) { document.body.style.overflow = 'hidden'; } else { document.body.style.overflow = ''; } }, [drawerOpen]);
 
   return (
     <main className="space-y-6">
@@ -46,11 +54,53 @@ export default function MenuWithCategories({ items }: { items: Item[] }) {
             {!filtered.length && <p className="text-sm text-gray-500 col-span-full">Tidak ada item.</p>}
           </div>
         </div>
-        <aside className="space-y-4 sticky top-4 self-start">
+        {/* Desktop static sidebar */}
+        <aside className="space-y-4 sticky top-4 self-start hidden md:block">
           <h2 className="text-lg font-semibold">Keranjang</h2>
-          <CartSummary />
+            <CartSummary />
         </aside>
       </div>
+
+      {/* Mobile floating button */}
+      <button
+        aria-label="Buka keranjang"
+        onClick={() => setDrawerOpen(true)}
+        className="md:hidden fixed bottom-4 right-4 z-40 shadow-lg rounded-full bg-green-600 text-white px-5 py-3 font-medium flex items-center gap-2"
+      >
+        <span>Keranjang</span>
+        {cartItems.length > 0 && (
+          <span className="inline-flex items-center justify-center text-xs bg-white text-green-700 rounded-full min-w-5 h-5 px-1 font-semibold">{cartItems.length}</span>
+        )}
+      </button>
+
+      {/* Drawer / overlay for mobile */}
+      {drawerOpen && (
+        <div className="md:hidden">
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40"
+            onClick={() => setDrawerOpen(false)}
+            aria-hidden="true"
+          />
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="cart-drawer-title"
+            className="fixed inset-y-0 right-0 w-80 max-w-[85%] bg-white shadow-xl z-50 flex flex-col animate-slide-in"
+          >
+            <div className="flex items-center justify-between p-4 border-b">
+              <h2 id="cart-drawer-title" className="text-lg font-semibold">Keranjang</h2>
+              <button aria-label="Tutup keranjang" onClick={() => setDrawerOpen(false)} className="text-gray-500 hover:text-gray-700">✕</button>
+            </div>
+            <div className="p-4 overflow-y-auto flex-1">
+              <CartSummary />
+            </div>
+          </div>
+        </div>
+      )}
+      <style jsx global>{`
+        @keyframes slide-in { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .animate-slide-in { animation: slide-in 0.25s ease-out; }
+      `}</style>
     </main>
   );
 }
