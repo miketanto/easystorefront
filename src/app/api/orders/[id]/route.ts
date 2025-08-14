@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 // Public GET: safe subset of order data (no phone)
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
-  const { id } = params;
+export async function GET(_req: Request, context: { params: Promise<{ id: string }> }) {
+  const { id } = await context.params; // Await params per Next.js dynamic API requirement
   const order = await prisma.order.findUnique({
     where: { id },
     select: {

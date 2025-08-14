@@ -31,6 +31,16 @@ model MenuItem {
   orderItems  OrderItem[]
 }
 
+model CartSession {
+  id        String   @id @default(cuid())
+  phone     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders    Order[]
+
+  @@index([phone])
+}
+
 model Order {
   id            String       @id @default(cuid())
   customerName  String
@@ -39,6 +49,8 @@ model Order {
   status        OrderStatus  @default(PENDING)
   total         Int
   items         OrderItem[]
+  cartSessionId String?
+  cartSession   CartSession? @relation(fields: [cartSessionId], references: [id])
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
 

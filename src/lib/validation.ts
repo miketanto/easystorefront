@@ -19,3 +19,8 @@ export const updateOrderStatusSchema = z.object({
 });
 
 export type UpdateOrderStatusInput = z.infer<typeof updateOrderStatusSchema>;
+
+export const startCartSessionSchema = z.object({
+  phone: z.string().min(5).max(30)
+});
+export type StartCartSessionInput = z.infer<typeof startCartSessionSchema>;
