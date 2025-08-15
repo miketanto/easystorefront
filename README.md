@@ -67,3 +67,26 @@ ORDER_RATE_LIMIT=5
 - Set environment variables above.
 - Persistent volume needed only if sticking with SQLite; otherwise migrate to Postgres (update `prisma/schema.prisma` provider).
 - Run `npx prisma migrate deploy` then `npm run build`.
+
+## Deploying to Render with PostgreSQL
+
+1. Create a PostgreSQL instance in Render.
+2. Copy the connection string and set `DATABASE_URL` in Render service environment variables and locally in `.env` (see `.env.example`).
+3. Update Prisma datasource (already set to `postgresql`).
+4. Run locally:
+   - `npx prisma migrate dev --name init_postgres` (first time on Postgres)
+   - `npm run db:seed`
+5. In Render Build Command:
+```
+npm install
+npx prisma migrate deploy
+node prisma/seed.js
+npm run build
+```
+Start Command:
+```
+npm start
+```
+6. After deploy, test placing an order.
+
+Optional: if coming from SQLite, you can discard old migrations and create a fresh one before first Postgres deploy.
