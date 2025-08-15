@@ -1,22 +1,11 @@
 "use client";
-import { Suspense, useCallback, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useEffect, useState, useCallback } from 'react';
 import { formatIDR } from '@/lib/currency';
 
 interface OrderItem { id: string; nameSnapshot: string; quantity: number; lineTotal: number; }
 interface Order { id: string; total: number; items: OrderItem[]; status: string; trackingLink?: string | null; note?: string | null; }
 
-export default function ThankYouPage() {
-  return (
-    <Suspense fallback={<main className="p-4"><p>Loading...</p></main>}>
-      <Content />
-    </Suspense>
-  );
-}
-
-function Content() {
-  const sp = useSearchParams();
-  const id = sp.get('id') || undefined;
+export default function ThankYouClient({ id }: { id?: string }) {
   const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
