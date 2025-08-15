@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import type { Order, OrderItem } from '@prisma/client';
+import type { Order, OrderItem } from '@/generated/prisma';
 
 // Types of events we broadcast to admin dashboard via SSE
 export type OrderBroadcast =
